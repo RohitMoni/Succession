@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.Linq;
+using UnityEngine;
 
 namespace Assets.Code
 {
@@ -26,12 +27,20 @@ namespace Assets.Code
 	
         // Update is called once per frame
         void Update () {
-	
+#if UNITY_EDITOR
+            if (Input.GetKeyDown(KeyCode.Return))
+            {
+                foreach (var senateMember in _senateMembers)
+                    senateMember.GetComponent<SenateMemberBehaviour>().IncrementSupport();
+            }
+#endif
         }
 
         public bool CoupIsSuccessful()
         {
-            return true;
+            var sumSupport = _senateMembers.Sum(senateMember => senateMember.GetComponent<SenateMemberBehaviour>().Support);
+
+            return (sumSupport > _senateMembers.Count()/2f);
         }
 
         void Initialise()
@@ -51,11 +60,6 @@ namespace Assets.Code
 
                 _senateMembers[i++] = senateMember;
             }
-        }
-
-        void SenateMemberPressed()
-        {
-
         }
     }
 }
